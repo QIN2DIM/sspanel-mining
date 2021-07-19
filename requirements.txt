@@ -1,0 +1,7 @@
+gevent>=21.1.2
+loguru>=0.5.3
+selenium>=3.141.0
+requests>=2.25.1
+bs4>=0.0.1
+beautifulsoup4>=4.9.3
+tqdm>=4.56.0
