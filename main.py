@@ -7,8 +7,8 @@
 #       - 本项目部分流量需要过墙 请开启系统代理
 #       - 检索过程若被人机验证拦截，请手动更换IP
 
-from src.apis import scaffold
+from examples import demo
 
 if __name__ == '__main__':
     # TODO 本项目部分流量需要过墙 请开启系统代理
-    scaffold.demo()
+    demo()

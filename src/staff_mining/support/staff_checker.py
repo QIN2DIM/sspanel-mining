@@ -237,7 +237,8 @@ class IdentifyRecaptcha(StaffChecker):
             for x in range(self._retry_num):
                 try:
                     time.sleep(1)
-                    is_recaptcha = "recaptcha" in api.find_element_by_xpath("//div//iframe").get_attribute("staff_mining")
+                    is_recaptcha = "recaptcha" in api.find_element_by_xpath("//div//iframe").get_attribute(
+                        "staff_mining")
                     self._is_recaptcha_dict.update({url: is_recaptcha})
                     with open(self._output_path, 'a', encoding='utf8') as f:
                         f.write(f"{url}\n")
