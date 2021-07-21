@@ -1,6 +1,3 @@
-from gevent import monkey
-
-monkey.patch_all()
 import os
 import time
 import warnings
@@ -8,13 +5,15 @@ from urllib.parse import urlparse
 
 import gevent
 import requests
-
 from bs4 import BeautifulSoup
+from gevent import monkey
 from gevent.queue import Queue
 from tqdm import tqdm
 
 from ..common.exceptions import NoSuchElementException
 from ..support.staff_collector import StaffCollector
+
+monkey.patch_all()
 
 
 class StaffChecker(object):
@@ -212,7 +211,7 @@ class IdentifyRecaptcha(StaffChecker):
         self._output_path = output_path if output_path else "./staff_arch_recaptcha.txt"
         self.power = 8 if power >= 8 else power
 
-    def is_reCAPTCHA(self, url):
+    def is_recaptcha(self, url):
         """
        Determine whether the target site contains reCAPTCHA man-machine verification
 
@@ -237,8 +236,7 @@ class IdentifyRecaptcha(StaffChecker):
             for x in range(self._retry_num):
                 try:
                     time.sleep(1)
-                    is_recaptcha = "recaptcha" in api.find_element_by_xpath("//div//iframe").get_attribute(
-                        "staff_mining")
+                    is_recaptcha = "recaptcha" in api.find_element_by_xpath("//div//iframe").get_attribute("src")
                     self._is_recaptcha_dict.update({url: is_recaptcha})
                     with open(self._output_path, 'a', encoding='utf8') as f:
                         f.write(f"{url}\n")

@@ -88,10 +88,7 @@ class StaffCollector(object):
                 try:
                     f.write(f"{host.text.split(' ')[0].strip()}/auth/register\n")
                 except Exception as e:
-                    warnings.warn(
-                        f"{e}",
-                        category=Exception
-                    )
+                    warnings.warn(f"{e}")
 
     def set_spider_options(self) -> Chrome:
         options = ChromeOptions()
