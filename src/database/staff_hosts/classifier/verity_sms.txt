@@ -1,2 +1,1 @@
 https://vip.nbbn.pro/auth/register
-https://vip.heitower.fun/auth/register
