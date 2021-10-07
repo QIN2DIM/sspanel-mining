@@ -9,6 +9,6 @@
 
 from examples import demo
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # TODO 本项目部分流量需要过墙 请开启系统代理
     demo()

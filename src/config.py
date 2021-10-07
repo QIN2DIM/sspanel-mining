@@ -1,5 +1,5 @@
 import os
-from os.path import dirname, join, exists
+from os.path import dirname, join, exists,abspath
 from sys import platform
 
 from loguru import logger
@@ -31,12 +31,12 @@ from loguru import logger
 # ---------------------------------------------------
 if "win" in platform:
     # 定位chromedriver根目录
-    CHROMEDRIVER_PATH = dirname(__file__) + "/chromedriver.exe"
+    CHROMEDRIVER_PATH = "./chromedriver.exe"
     # 定位工程根目录 SERVER_DIR_PROJECT
     SERVER_DIR_PROJECT = dirname(__file__)
 else:
     CHROMEDRIVER_PATH = dirname(__file__) + "/chromedriver"
-    SERVER_DIR_PROJECT = f"/qinse/sspanel-mining"
+    SERVER_DIR_PROJECT = abspath(".")
 
 # 文件数据库 目录根
 SERVER_DIR_DATABASE = join(SERVER_DIR_PROJECT, "database")
@@ -59,7 +59,6 @@ logger.add(
 
 # 采集器默认并发数
 DEFAULT_POWER = os.cpu_count()
-
 # 若chromedriver不在CHROMEDRIVER_PATH指定的路径下 尝试从环境变量中查找路径
 if not exists(CHROMEDRIVER_PATH):
-    CHROMEDRIVER_PATH = None
+    CHROMEDRIVER_PATH = "chromedriver"

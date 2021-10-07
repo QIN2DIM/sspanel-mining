@@ -3,4 +3,4 @@
 # Author     : QIN2DIM
 # Github     : https://github.com/QIN2DIM
 # Description:
-from .scaffold import demo
+from .get_started import demo
