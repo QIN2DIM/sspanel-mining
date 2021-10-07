@@ -1,9 +1,9 @@
 import os
-from os.path import dirname, join, exists,abspath
+from os.path import dirname, join, exists, abspath
 from sys import platform
 
 from loguru import logger
-
+import pytz
 # ---------------------------------------------------
 # TODO (√)CHROMEDRIVER_PATH -- ChromeDriver的路径
 #  本项目依赖google-chrome驱动插件，请确保您的开发环境中已经安装chrome以及对应版本的chromedriver
@@ -62,3 +62,6 @@ DEFAULT_POWER = os.cpu_count()
 # 若chromedriver不在CHROMEDRIVER_PATH指定的路径下 尝试从环境变量中查找路径
 if not exists(CHROMEDRIVER_PATH):
     CHROMEDRIVER_PATH = "chromedriver"
+# 时区
+TIME_ZONE_CN = pytz.timezone("Asia/Shanghai")
+TIME_ZONE_NY = pytz.timezone("America/New_York")

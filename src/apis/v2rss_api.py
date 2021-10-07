@@ -18,7 +18,7 @@ from gevent import monkey
 monkey.patch_all()
 import os
 from datetime import datetime
-from src.config import logger, SERVER_DIR_DATABASE, CHROMEDRIVER_PATH
+from src.config import logger, SERVER_DIR_DATABASE, CHROMEDRIVER_PATH, TIME_ZONE_CN
 from src.sspanel_mining import StaffChecker, StaffCollector, IdentifyRecaptcha, StaffEntropyGenerator
 from src.sspanel_mining.common.exceptions import *
 
@@ -30,7 +30,7 @@ class _Interface(object):
         self._cache_dir_classifier = os.path.join(self._cache_dir_staff_hosts, "classifier")
 
         self._cache_path_staff_hosts = os.path.join(self._cache_dir_staff_hosts,
-                                                    f"staff_host_{str(datetime.now()).split(' ')[0]}.txt")
+                                                    f"staff_host_{str(datetime.now(TIME_ZONE_CN)).split(' ')[0]}.txt")
         self._path_staff_arch_recaptcha = os.path.join(self._cache_dir_classifier, "staff_arch_recaptcha.txt")
         self._path_staff_arch_entropy = os.path.join(self._cache_dir_classifier, "staff_arch_entropy.txt")
 
