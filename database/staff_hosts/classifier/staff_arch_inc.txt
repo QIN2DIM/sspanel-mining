@@ -1,9 +1,9 @@
-https://www.xinyun.buzz/auth/register
-https://thjsq.co/auth/register
-https://yuejisu.cc/auth/register
-https://www.xiaoliebao.xyz/auth/register
-https://www.vpau.vip/auth/register
-https://moccloud.com/auth/register
 https://www.senlinss.xyz/auth/register
-https://igongtou.xyz/auth/register
+https://thjsq.co/auth/register
+https://www.xinyun.buzz/auth/register
 https://secondw.org/auth/register
+https://www.vpau.vip/auth/register
+https://igongtou.xyz/auth/register
+https://www.xiaoliebao.xyz/auth/register
+https://moccloud.com/auth/register
+https://yuejisu.cc/auth/register
