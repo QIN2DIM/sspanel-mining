@@ -67,6 +67,6 @@ jobs:
 
     - name: v2rss push
       run: |
-        git add --all
+        git add .
         git commit -m "Automated deployment @ $(date '+%Y-%m-%d %H:%M:%S') ${{ env.TZ }}"
         git push --force origin main
