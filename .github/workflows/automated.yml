@@ -47,17 +47,6 @@ jobs:
     - name: v2rss mining
       run: |
         python main.py
-#
-#    # 执行一次清洗作业，检查订阅监听模块是否正常工作
-#    - name: v2rss overdue/decouple
-#      run: |
-#        python main.py overdue
-#        python main.py decouple
-#
-#    # 执行一次采集作业，检查采集模块是否正常工作
-#    - name: v2rss spawn
-#      run: |
-#        python main.py spawn
 
     # ============================================
     # TODO [√] 更新仓库数据
@@ -67,6 +56,6 @@ jobs:
 
     - name: v2rss push
       run: |
-        git add .
+        git add --all
         git commit -m "Automated deployment @ $(date '+%Y-%m-%d %H:%M:%S') ${{ env.TZ }}"
-        git push --force origin main
+        git push --u origin main
