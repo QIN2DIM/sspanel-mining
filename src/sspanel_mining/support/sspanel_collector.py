@@ -268,7 +268,7 @@ class StaffCollector:
                 # 页面追踪
                 # --------------------------------------------------------------
                 res = self._page_tracking(api=api)
-                if not res and ack_num == self.page_num:
+                if not res and ack_num >= self.page_num:
                     loop_progress.update(ack_num)
                     return
                 # 萃取注册链接并保存
