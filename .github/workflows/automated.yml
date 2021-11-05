@@ -58,4 +58,4 @@ jobs:
       run: |
         git add --all
         git commit -m "Automated deployment @ $(date '+%Y-%m-%d %H:%M:%S') ${{ env.TZ }}"
-        git push --u origin main
+        git push -u origin main
