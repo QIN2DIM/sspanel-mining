@@ -76,7 +76,7 @@ class _Interface(object):
                     for element in set(data):
                         f.write(f"{element}\n")
 
-    def collector(self, silence: bool = True, debug: bool = False, page_num: int = 26, sleep_node: int = 5):
+    def collector(self, silence: bool = True, debug: bool = False, page_num: int = None, sleep_node: int = 5):
         """
         STAFF site collector
 
@@ -291,7 +291,7 @@ class _Interface(object):
         """
         # 启动STAFF采集器
         if use_collector:
-            self.collector(silence=silence, debug=debug, page_num=26, sleep_node=5)
+            self.collector(silence=silence, debug=debug, page_num=None, sleep_node=5)
         # 启动STAFF检查器
         if use_checker:
             # 进行基本的站点分类任务

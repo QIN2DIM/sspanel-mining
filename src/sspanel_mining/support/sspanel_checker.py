@@ -244,6 +244,7 @@ class IdentifyRecaptcha(StaffChecker):
                 try:
                     time.sleep(1)
                     is_recaptcha = "recaptcha" in api.find_element_by_xpath(
+
                         "//div//iframe"
                     ).get_attribute("src")
                     self._is_recaptcha_dict.update({url: is_recaptcha})
