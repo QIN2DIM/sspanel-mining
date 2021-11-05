@@ -130,7 +130,6 @@ class StaffCollector:
             api.get(next_url)
             return True
         else:
-            self.reset_loop_progress(api=api, new_status="__reset__")
             return False
 
     def _capture_host(self, api: Chrome):
@@ -143,7 +142,6 @@ class StaffCollector:
         with open(self.cache_path, "a", encoding="utf8") as f:
             for host in hosts:
                 f.write(f"{host.text.split(' ')[0].strip()}/auth/register\n")
-
     @staticmethod
     def counterattack(f):
         @functools.wraps(f)
@@ -247,6 +245,8 @@ class StaffCollector:
                 # ==============================================================
                 # 采集器
                 # ==============================================================
+                # 萃取注册链接并保存
+                self._capture_host(api=api)
                 # if self.page_num == 26:
                 #     self.reset_loop_progress(api=api)
                 #     loop_progress.update(ack_num)
@@ -268,11 +268,11 @@ class StaffCollector:
                 # 页面追踪
                 # --------------------------------------------------------------
                 res = self._page_tracking(api=api)
-                if not res and ack_num >= self.page_num:
+                if ack_num >= self.page_num:
+                    self.reset_loop_progress(api=api, new_status="__reset__")
                     loop_progress.update(ack_num)
+                if not res:
                     return
-                # 萃取注册链接并保存
-                self._capture_host(api=api)
                 # ==============================================================
                 # 休眠控制器
                 # ==============================================================
