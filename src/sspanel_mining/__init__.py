@@ -3,9 +3,8 @@
     - 需要本机启动系统全局代理，或使用“国外”服务器部署
 """
 from .common import exceptions
-from .support.sspanel_checker import StaffChecker, IdentifyRecaptcha, StaffEntropyGenerator
-from .support.sspanel_collector import StaffCollector
+from .support.sspanel_collector import SSPanelHostsCollector
 
-__version__ = 'v0.1.1'
+__version__ = 'v0.2.1'
 
-__all__ = ['StaffCollector', 'IdentifyRecaptcha', 'StaffEntropyGenerator', 'StaffChecker', 'exceptions']
+__all__ = ['SSPanelHostsCollector', 'exceptions']

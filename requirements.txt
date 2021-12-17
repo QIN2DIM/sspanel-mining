@@ -1,8 +1,11 @@
-gevent>=21.8.0
-pytz>=2021.1
+pytz>=2021.3
 loguru>=0.5.3
-selenium>=4.0.0
+selenium>=4.1.0
+gevent>=21.8.0
+tqdm>=4.62.3
 requests>=2.26.0
 bs4>=0.0.1
-beautifulsoup4>=4.9.3
-tqdm>=4.62.1
+beautifulsoup4>=4.10.0
+cloudscraper>=1.2.58
+fire>=0.4.0
+urllib3==1.25.11
