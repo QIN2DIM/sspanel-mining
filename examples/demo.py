@@ -21,12 +21,15 @@ from src.config import (
 )
 
 
-def demo(env: str = "development", silence: bool = None):
+def demo(env: str = "development", silence: bool = None, power: int = 16):
     """
     运行案例
 
-    Usage: python main.py --env=production 在 GitHub Actions 中构建生产环境
-    or: python main.py --silence=False 显式启动，在 linux 中运行时无效
+    Usage: python main.py --env=production      |在 GitHub Actions 中构建生产环境
+    or: python main.py --silence=False          |显式启动，在 linux 中运行时无效
+    or: python main.py --power=4                |指定分类器运行功率
+
+    :param power: 采集功率
     :param silence:
     :param env: within [development production]
     :return:
@@ -38,6 +41,10 @@ def demo(env: str = "development", silence: bool = None):
     """
     # 参数处理
     silence = True if silence is None else silence
+
+    # 校准分类器功率
+    power = power if isinstance(power, int) else max(os.cpu_count(), 4)
+    power = power * 2 if os.cpu_count() >= power else power
 
     # 补全模版文件名
     path_file_txt = PATH_DATASET_TEMPLATE.format(
@@ -72,7 +79,7 @@ def demo(env: str = "development", silence: bool = None):
 
     # 数据清洗
     sug = SSPanelHostsClassifier(docker=urls)
-    sug.go()
+    sug.go(power=power)
 
     """
     TODO [√]分类简述

@@ -83,7 +83,7 @@ class CoroutineSpeedup:
         """
         pass
 
-    def go(self) -> None:
+    def go(self, power: int = 4) -> None:
         """
         框架接口
 
@@ -97,7 +97,8 @@ class CoroutineSpeedup:
         if self.max_queue_size == 0:
             return
 
-            # 配置弹性采集功率
+        # 配置弹性采集功率
+        self.power = max(os.cpu_count(), power, self.power)
         self.power = self.max_queue_size if self.power > self.max_queue_size else self.power
 
         # 任务启动
