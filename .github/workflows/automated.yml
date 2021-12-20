@@ -1,8 +1,8 @@
 name: V2RSS Mining
 
 on:
-#   push:
-#     branches: [ main ]
+   push:
+     branches: [ main ]
   #   一天运行两次
   schedule:
     - cron: '25 */12 * * *'
@@ -46,7 +46,7 @@ jobs:
 
       - name: v2rss mining
         run: |
-          python main.py --env=production
+          python main.py mining --env=production --collector --classifier --source=local
 
       # ============================================
       # TODO [√] 更新仓库数据

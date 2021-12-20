@@ -1,10 +1,10 @@
 import urllib.request
 
-from requests import Response
 from bs4 import BeautifulSoup
 from cloudscraper import create_scraper
 from cloudscraper.exceptions import CloudflareChallengeError
 from loguru import logger
+from requests import Response
 from requests.exceptions import (
     SSLError,
     HTTPError,
@@ -33,7 +33,7 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
             # 样本标签
             "label": "",
             # 样本别名
-            "alias": ""
+            "alias": "",
         }
 
     def _fall_status(self, status_code: int, url: str):
@@ -169,14 +169,15 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
             _content += " ".join([f"{i[0]}={i[1]}" for i in flags.items()])
         return _content
 
-    def handle_html(self, url: str):
+    def handle_html(self, url: str, allow_redirects: bool = False):
         """
 
+        :param allow_redirects:
         :param url:
         :return:
         """
         scraper = create_scraper()
-        response = scraper.get(url, timeout=60, allow_redirects=False, headers=self.headers)
+        response = scraper.get(url, timeout=60, allow_redirects=allow_redirects, headers=self.headers)
         status_code = response.status_code
         soup = BeautifulSoup(response.text, "html.parser")
         return response, status_code, soup
@@ -224,6 +225,7 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
                 url=url
             ))
             return False
+        # <CloudflareDefense>被迫中断且无法跳过
         except CloudflareChallengeError:
             logger.debug(self.report(
                 message="检测失败",

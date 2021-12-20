@@ -14,7 +14,7 @@ class CoroutineSpeedup:
 
     def __init__(self, docker, power: int = None):
         # 任务容器：queue
-        self.work_q, self.done = Queue(), Queue()
+        self.worker, self.done = Queue(), Queue()
 
         # 任务容器
         self.docker = docker
@@ -31,17 +31,17 @@ class CoroutineSpeedup:
 
         :return:
         """
-        p = self.max_queue_size - self.work_q.qsize()
+        p = self.max_queue_size - self.worker.qsize()
         return "__pending__" if p < self.power else f"{p}/{self.max_queue_size}"
 
-    def launch(self):
+    def launcher(self):
         """
         适配器实例生产
 
         :return:
         """
-        while not self.work_q.empty():
-            task = self.work_q.get_nowait()
+        while not self.worker.empty():
+            task = self.worker.get_nowait()
             self.control_driver(task)
 
     def control_driver(self, task):
@@ -53,6 +53,14 @@ class CoroutineSpeedup:
         """
         raise ImportError
 
+    def preload(self):
+        """
+        数据预处理
+
+        :return:
+        """
+        pass
+
     def overload(self):
         """
         任务重载
@@ -61,8 +69,8 @@ class CoroutineSpeedup:
         """
         if self.docker:
             for task in self.docker:
-                self.work_q.put_nowait(task)
-        self.max_queue_size = self.work_q.qsize()
+                self.worker.put_nowait(task)
+        self.max_queue_size = self.worker.qsize()
 
     def offload(self) -> list:
         """
@@ -104,7 +112,7 @@ class CoroutineSpeedup:
         # 任务启动
         task_list = []
         for _ in range(self.power):
-            task = gevent.spawn(self.launch)
+            task = gevent.spawn(self.launcher)
             task_list.append(task)
         try:
             gevent.joinall(task_list)
