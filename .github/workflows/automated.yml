@@ -1,7 +1,7 @@
 name: V2RSS Mining
 
 on:
-   push:
+  push:
      branches: [ main ]
   #   一天运行两次
   schedule:
