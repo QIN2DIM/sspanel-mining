@@ -6,6 +6,6 @@ from .sspanel_checker import SSPanelStaffChecker
 from .sspanel_classifier import SSPanelHostsClassifier
 from .sspanel_collector import SSPanelHostsCollector
 
-__version__ = 'v0.2.1'
+__version__ = 'v0.2.2'
 
 __all__ = ['SSPanelHostsCollector', "SSPanelStaffChecker", "SSPanelHostsClassifier"]

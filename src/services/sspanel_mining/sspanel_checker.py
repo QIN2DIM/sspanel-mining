@@ -4,6 +4,7 @@
 # Github     : https://github.com/QIN2DIM
 # Description:
 
+from typing import Optional, List, Any
 from urllib.parse import urlparse
 
 from cloudscraper.exceptions import CloudflareChallengeError
@@ -19,7 +20,7 @@ from .sspanel_classifier import SSPanelHostsClassifier
 
 
 class SSPanelStaffChecker(SSPanelHostsClassifier):
-    def __init__(self, docker: list = None, debug: bool = True):
+    def __init__(self, docker: Optional[List[Any]] = None, debug: Optional[bool] = True):
         super(SSPanelStaffChecker, self).__init__(docker=docker)
 
         self.path_register = "/auth/register"
@@ -39,7 +40,7 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
             }
         }
 
-    def _fall_staff_page(self, staff_url: str):
+    def _fall_staff_page(self, staff_url: str) -> None:
         response, status_code, soup = self.handle_html(staff_url)
 
         _loss_staff = True if status_code != 200 else False
@@ -52,7 +53,7 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
             ))
         self._protocol_hook(staff_url, "loss_staff", _loss_staff)
 
-    def _fall_tos_page(self, tos_url: str):
+    def _fall_tos_page(self, tos_url: str) -> None:
         response, status_code, soup = self.handle_html(tos_url)
 
         _loss_tos = True if status_code != 200 else False
@@ -66,7 +67,7 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
 
         self._protocol_hook(tos_url, "loss_tos", _loss_tos)
 
-    def _fall_staff_footer(self, register_url: str):
+    def _fall_staff_footer(self, register_url: str) -> None:
 
         context = {}
 
@@ -94,7 +95,7 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
                 url=context["url"],
             ))
 
-    def _fall_rookie(self, url: str):
+    def _fall_rookie(self, url: str) -> None:
         response, status_code, soup = self.handle_html(url)
 
         # 有趣的模版，有趣的灵魂
@@ -115,7 +116,7 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
         # 缓存上下文数据
         self._protocol_hook(url, "rookie", _is_rookie)
 
-    def _protocol_hook(self, url: str, cache_key: str, cache_value: bool):
+    def _protocol_hook(self, url: str, cache_key: str, cache_value: bool) -> None:
         """
 
         :param url:

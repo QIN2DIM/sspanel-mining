@@ -3,7 +3,6 @@
 # Author     : QIN2DIM
 # Github     : https://github.com/QIN2DIM
 # Description: 扫描、清洗、分类、存储暴露在公网上的SSPanel-Uim站点
-
 from fire import Fire
 
 from services.scaffold import Scaffold

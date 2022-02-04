@@ -3,6 +3,8 @@
 # Author     : QIN2DIM
 # Github     : https://github.com/QIN2DIM
 # Description:
+from typing import Optional, Any
+
 from webdriver_manager.chrome import ChromeDriverManager
 
 from services.settings import logger
@@ -26,17 +28,17 @@ def _download_driver(*args, **kwargs):
 
 
 class PerformanceReleaser(CoroutineSpeedup):
-    def __init__(self, docker, power=None):
+    def __init__(self, docker: Any, power: Optional[int] = None):
         super(PerformanceReleaser, self).__init__(docker=docker, power=power)
 
-    def control_driver(self, task, *args, **kwargs):
+    def control_driver(self, task: Any, *args, **kwargs):
         try:
             task(*args, **kwargs)
         except Exception as e:  # noqa
             logger.exception(e)
 
 
-def run(cdn: bool = False):
+def run(cdn: Optional[bool] = False):
     """
     下载项目运行所需的各项依赖。
 

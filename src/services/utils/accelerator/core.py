@@ -4,6 +4,7 @@
 # Github     : https://github.com/QIN2DIM
 # Description:
 import os
+from typing import Optional, List, Any
 
 import gevent
 from gevent.queue import Queue
@@ -12,7 +13,7 @@ from gevent.queue import Queue
 class CoroutineSpeedup:
     """轻量化的协程控件"""
 
-    def __init__(self, docker=None, power: int = None):
+    def __init__(self, docker: Optional[Any] = None, power: Optional[int] = None):
         # 任务容器：queue
         self.worker, self.done = Queue(), Queue()
 
@@ -44,7 +45,7 @@ class CoroutineSpeedup:
             task = self.worker.get_nowait()
             self.control_driver(task, *args, **kwargs)
 
-    def control_driver(self, task, *args, **kwargs):
+    def control_driver(self, task: Any, *args, **kwargs):
         """
         默认逻辑
 
@@ -72,7 +73,7 @@ class CoroutineSpeedup:
                 self.worker.put_nowait(task)
         self.max_queue_size = self.worker.qsize()
 
-    def offload(self) -> list:
+    def offload(self) -> Optional[List[Any]]:
         """
         缓存卸载
 
@@ -91,7 +92,7 @@ class CoroutineSpeedup:
         """
         pass
 
-    def go(self, power: int = None, *args, **kwargs):
+    def go(self, power: Optional[int] = None, *args, **kwargs):
         """
         框架接口
 

@@ -12,7 +12,7 @@ class SpawnUnitTest(unittest.TestCase):
 
     def test_classifier(self):
         # 获取母仓库历史1天的缓存数据
-        urls = mining.load_sspanel_hosts_remote(batch=1)
+        urls = mining.V2RSSMiningToolkit.load_sspanel_hosts_remote(batch=1)
 
         # 性能测试
         sug = mining.SSPanelHostsClassifier(docker=urls)
