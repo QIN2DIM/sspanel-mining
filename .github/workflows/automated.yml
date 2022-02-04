@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -r requirements.txt
       - name: Scaffold Install
         run: |
           cd src && python main.py install
@@ -42,7 +42,7 @@ jobs:
       # ============================================
       - name: Scafflod Mining
         run: |
-          python main.py mining --env=production --collector --classifier --source=local
+          cd src && python main.py mining --env=production --collector --classifier --source=local
       # ============================================
       # TODO [√] 更新仓库数据
       # ============================================
