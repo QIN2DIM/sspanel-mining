@@ -5,13 +5,7 @@ from cloudscraper import create_scraper
 from cloudscraper.exceptions import CloudflareChallengeError
 from loguru import logger
 from requests import Response
-from requests.exceptions import (
-    SSLError,
-    HTTPError,
-    Timeout,
-    ProxyError,
-    ConnectionError,
-)
+from requests.exceptions import SSLError, HTTPError, Timeout, ProxyError, ConnectionError
 
 from services.utils import CoroutineSpeedup
 
@@ -22,9 +16,7 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
         self.local_proxy = urllib.request.getproxies()
         logger.debug("本机代理状态 PROXY={}".format(self.local_proxy))
 
-        self.headers = {
-            "accept-language": "zh-CN",
-        }
+        self.headers = {"accept-language": "zh-CN"}
 
         self.context = {
             # 直连链接
@@ -43,15 +35,14 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
         :param url:
         :return:
         """
-        if (
-                status_code > 400
-                or status_code == 302
-        ):
-            logger.error(self.report(
-                message="请求异常",
-                context={"url": url, "label": f"请求异常(ERROR:{status_code})"},
-                url=url,
-            ))
+        if status_code > 400 or status_code == 302:
+            logger.error(
+                self.report(
+                    message="请求异常",
+                    context={"url": url, "label": f"请求异常(ERROR:{status_code})"},
+                    url=url,
+                )
+            )
             return False
         return True
 
@@ -63,15 +54,12 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
         :param url:
         :return:
         """
-        if (
-                "closed" in soup.text
-                or not soup.find(id="passwd")
-        ):
-            logger.warning(self.report(
-                message="拒绝注册",
-                context={"url": url, "label": "拒绝注册"},
-                url=url,
-            ))
+        if "closed" in soup.text or not soup.find(id="passwd"):
+            logger.warning(
+                self.report(
+                    message="拒绝注册", context={"url": url, "label": "拒绝注册"}, url=url
+                )
+            )
             return False
         return True
 
@@ -84,11 +72,11 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
         :return:
         """
         if soup.find("select") and soup.find(id="email_verify"):
-            logger.info(self.report(
-                message="限制注册",
-                context={"url": url, "label": "限制注册(邮箱)"},
-                url=url,
-            ))
+            logger.info(
+                self.report(
+                    message="限制注册", context={"url": url, "label": "限制注册(邮箱)"}, url=url
+                )
+            )
             return False
         return True
 
@@ -99,16 +87,16 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
         :return:
         """
         if (
-                "Please fill in invitation code" in response.text
-                or "请填写邀请码" in response.text
-                or "邀请码（必填）" in response.text
-                or "邀请码(必填)" in response.text
+            "Please fill in invitation code" in response.text
+            or "请填写邀请码" in response.text
+            or "邀请码（必填）" in response.text
+            or "邀请码(必填)" in response.text
         ):
-            logger.info(self.report(
-                message="限制注册",
-                context={"url": url, "label": "限制注册(邀请)"},
-                url=url,
-            ))
+            logger.info(
+                self.report(
+                    message="限制注册", context={"url": url, "label": "限制注册(邀请)"}, url=url
+                )
+            )
             return False
         return True
 
@@ -130,20 +118,20 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
             labels_.append("GeeTest Validation")
         if not labels_:
             labels_.append("Normal")
-        logger.success(self.report(
-            message="实例正常",
-            context={"url": url, "label": ";".join(labels_)},
-            url=url,
-        ))
+        logger.success(
+            self.report(
+                message="实例正常", context={"url": url, "label": ";".join(labels_)}, url=url
+            )
+        )
         return True
 
     def _fall_danger(self, url: str):
         if not url.startswith("https://"):
-            logger.warning(self.report(
-                message="危险通信",
-                context={"url": url, "label": "危险通信(HTTP)"},
-                url=url
-            ))
+            logger.warning(
+                self.report(
+                    message="危险通信", context={"url": url, "label": "危险通信(HTTP)"}, url=url
+                )
+            )
             return False
         return True
 
@@ -176,7 +164,9 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
         :return:
         """
         scraper = create_scraper()
-        response = scraper.get(url, timeout=60, allow_redirects=allow_redirects, headers=self.headers)
+        response = scraper.get(
+            url, timeout=60, allow_redirects=allow_redirects, headers=self.headers
+        )
         status_code = response.status_code
         soup = BeautifulSoup(response.text, "html.parser")
         return response, status_code, soup
@@ -218,20 +208,22 @@ class SSPanelHostsClassifier(CoroutineSpeedup):
             return False
         # 未授权站点
         except ValueError:
-            logger.critical(self.report(
-                message="危险通信",
-                context={"url": url, "label": "未授权站点"},
-                url=url
-            ))
+            logger.critical(
+                self.report(
+                    message="危险通信", context={"url": url, "label": "未授权站点"}, url=url
+                )
+            )
             return False
         # <CloudflareDefense>被迫中断且无法跳过
         except CloudflareChallengeError:
-            logger.debug(self.report(
-                message="检测失败",
-                context={"url": url, "label": "CloudflareDefenseV2"},
-                url=url,
-                error="<CloudflareDefense>被迫中断且无法跳过"
-            ))
+            logger.debug(
+                self.report(
+                    message="检测失败",
+                    context={"url": url, "label": "CloudflareDefenseV2"},
+                    url=url,
+                    error="<CloudflareDefense>被迫中断且无法跳过",
+                )
+            )
             return False
         # 站点负载紊乱或主要服务器已瘫痪
         except Timeout:

@@ -15,12 +15,8 @@ from services.settings import (
     DIR_OUTPUT_STORE_CLASSIFIER,
     TIME_ZONE_CN,
     logger,
-
 )
-from services.sspanel_mining import (
-    SSPanelHostsClassifier,
-    SSPanelHostsCollector
-)
+from services.sspanel_mining import SSPanelHostsClassifier, SSPanelHostsCollector
 
 
 class V2RSSMiningToolkit:
@@ -39,12 +35,12 @@ class V2RSSMiningToolkit:
         # 若文件不存在或仅存在空白文件时返回 True
         # 若文件不存在，初始化文件
         if not os.path.exists(path_file_txt):
-            with open(path_file_txt, 'w', encoding="utf8"):
+            with open(path_file_txt, "w", encoding="utf8"):
                 pass
             return True
 
         # 若文件存在但为空仍返回 True
-        with open(path_file_txt, 'r', encoding="utf8") as f:
+        with open(path_file_txt, "r", encoding="utf8") as f:
             return False if f.read() else True
 
     @staticmethod
@@ -63,24 +59,37 @@ class V2RSSMiningToolkit:
                 f.write(f"{i}\n")
 
     @staticmethod
-    def load_sspanel_hosts() -> Optional[List[str]]:
+    def load_sspanel_hosts(latest: Optional[bool] = True) -> Optional[List[str]]:
         """
         sspanel-预处理数据集 获取过去X天的历史数据
 
         :return:
         """
+
+        # 读回 Collector 输出
+        def rebase_urls(path_file_txt_):
+            with open(path_file_txt_, "r", encoding="utf8") as file_:
+                for url_ in file_.read().split("\n"):
+                    urls.append(url_)
+
         # 待分类链接
         urls = []
 
-        # 识别并读回 Collector 输出
-        for t in os.listdir(DIR_OUTPUT_STORE_COLLECTOR):
-            if t.endswith(V2RSSMiningToolkit.FOCUS_SUFFIX) and t.startswith(V2RSSMiningToolkit.FOCUS_PREFIX):
-                # 补全路径模版
-                path_file_txt = os.path.join(DIR_OUTPUT_STORE_COLLECTOR, t)
-                # 读回 Collector 输出
-                with open(path_file_txt, "r", encoding="utf8") as f:
-                    for url in f.read().split("\n"):
-                        urls.append(url)
+        # 读取最新数据|读取所有历史数据
+        if latest is True:
+            path_file_txt = os.path.join(
+                DIR_OUTPUT_STORE_COLLECTOR, max(os.listdir(DIR_OUTPUT_STORE_COLLECTOR))
+            )
+            rebase_urls(path_file_txt)
+        else:
+            for t in os.listdir(DIR_OUTPUT_STORE_COLLECTOR):
+                if t.endswith(V2RSSMiningToolkit.FOCUS_SUFFIX) and t.startswith(
+                    V2RSSMiningToolkit.FOCUS_PREFIX
+                ):
+                    # 补全路径模版
+                    path_file_txt = os.path.join(DIR_OUTPUT_STORE_COLLECTOR, t)
+                    # 读回 Collector 输出
+                    rebase_urls(path_file_txt)
 
         # 清洗杂质
         urls = {i for i in urls if i}
@@ -89,7 +98,9 @@ class V2RSSMiningToolkit:
         return list(urls)
 
     @staticmethod
-    def output_foul_dataset(dir_output: str, docker: dict, path_output: Optional[str] = None):
+    def output_foul_dataset(
+        dir_output: str, docker: dict, path_output: Optional[str] = None
+    ):
         """
 
         :param dir_output:
@@ -97,12 +108,11 @@ class V2RSSMiningToolkit:
         :param path_output:
         :return:
         """
-        path_output_template = os.path.join(
-            dir_output,
-            "rookie_"
-        )
+        path_output_template = os.path.join(dir_output, "rookie_")
 
-        path_output_ = f"{path_output_template}.csv" if path_output is None else path_output
+        path_output_ = (
+            f"{path_output_template}.csv" if path_output is None else path_output
+        )
 
         docker = sorted(docker, key=lambda x: x["labels"])
 
@@ -116,10 +126,14 @@ class V2RSSMiningToolkit:
         except PermissionError:
             logger.warning(f"导出文件被占用 - file={path_output_}")
             path_output_ = f"{path_output_template}.{random.randint(1, 10)}.csv"
-            return V2RSSMiningToolkit.output_cleaning_dataset(dir_output, docker, path_output=path_output_)
+            return V2RSSMiningToolkit.output_cleaning_dataset(
+                dir_output, docker, path_output=path_output_
+            )
 
     @staticmethod
-    def output_cleaning_dataset(dir_output: str, docker: list, path_output: Optional[str] = None) -> str:
+    def output_cleaning_dataset(
+        dir_output: str, docker: list, path_output: Optional[str] = None
+    ) -> str:
         """
         输出分类/清洗结果
 
@@ -136,9 +150,11 @@ class V2RSSMiningToolkit:
             dir_output,
             "mining_{}".format(
                 str(datetime.now(TIME_ZONE_CN)).split(".")[0].replace(":", "-")
-            )
+            ),
         )
-        path_output_ = f"{path_output_template}.csv" if path_output is None else path_output
+        path_output_ = (
+            f"{path_output_template}.csv" if path_output is None else path_output
+        )
 
         docker = sorted(docker, key=lambda x: x["label"])
         try:
@@ -151,7 +167,9 @@ class V2RSSMiningToolkit:
         except PermissionError:
             logger.warning(f"导出文件被占用 - file={path_output_}")
             path_output_ = f"{path_output_template}.{random.randint(1, 10)}.csv"
-            return V2RSSMiningToolkit.output_cleaning_dataset(dir_output, docker, path_output=path_output_)
+            return V2RSSMiningToolkit.output_cleaning_dataset(
+                dir_output, docker, path_output=path_output_
+            )
 
     @staticmethod
     def preview(path_output: str, docker: Optional[list] = None):
@@ -184,8 +202,10 @@ class V2RSSMiningToolkit:
         from bs4 import BeautifulSoup
 
         # 初始化数据集
-        url_ = "https://raw.githubusercontent.com/RobAI-Lab/sspanel-mining/main/src/database" \
-               "/sspanel_hosts/dataset_{}.txt"
+        url_ = (
+            "https://raw.githubusercontent.com/RobAI-Lab/sspanel-mining/main/src/database"
+            "/sspanel_hosts/dataset_{}.txt"
+        )
         urls = []
         today_ = datetime.now()
 
@@ -197,7 +217,7 @@ class V2RSSMiningToolkit:
             if res.status_code == 200:
                 logger.info(f"正在下载数据集 {focus_}")
                 soup = BeautifulSoup(res.text, "html.parser")
-                urls += soup.text.split('\n')
+                urls += soup.text.split("\n")
 
         # 返回参数
         return list(set(urls))
@@ -221,8 +241,7 @@ class V2RSSMiningToolkit:
 
         # 默认目录下不存在分类结果
         if not classifier_outputs:
-            logger.critical("默认目录下缺少分类器的缓存文件 - "
-                            f"dir={DIR_OUTPUT_STORE_CLASSIFIER}")
+            logger.critical("默认目录下缺少分类器的缓存文件 - " f"dir={DIR_OUTPUT_STORE_CLASSIFIER}")
             sys.exit()
 
         # 导入最新的分类数据
@@ -242,10 +261,7 @@ class V2RSSMiningToolkit:
         filter_docker = []
         for element in data:
             url_, label_ = element["url"], element["label"]
-            if (
-                    "危险通信" in label_
-                    or "请求异常" in label_
-            ):
+            if "危险通信" in label_ or "请求异常" in label_:
                 continue
             filter_docker.append(url_)
 
@@ -266,7 +282,8 @@ def run_collector(env: Optional[str] = "development", silence: Optional[bool] = 
     """
     # 路径模版
     path_dataset_template = os.path.join(
-        DIR_OUTPUT_STORE_COLLECTOR, V2RSSMiningToolkit.FOCUS_PREFIX + "_{}" + V2RSSMiningToolkit.FOCUS_SUFFIX
+        DIR_OUTPUT_STORE_COLLECTOR,
+        V2RSSMiningToolkit.FOCUS_PREFIX + "_{}" + V2RSSMiningToolkit.FOCUS_SUFFIX,
     )
     # 实例化并运行采集器
     # 假设的应用场景中，非Windows系统强制无头启动Selenium
@@ -290,16 +307,16 @@ def run_collector(env: Optional[str] = "development", silence: Optional[bool] = 
     # 生产环境下每次运行程序都要启动采集器
     if need_to_build_collector or env == "production":
         SSPanelHostsCollector(
-            path_file_txt=path_file_txt,
-            silence=silence_,
-            debug=False
+            path_file_txt=path_file_txt, silence=silence_, debug=False
         ).run()
 
         # Collector 使用 `a` 指针方式插入新数据，此处使用 data_cleaning() 去重
         V2RSSMiningToolkit.data_cleaning(path_file_txt)
 
 
-def run_classifier(power: Optional[int] = 16, source: Optional[str] = "local", batch: Optional[int] = 1):
+def run_classifier(
+    power: Optional[int] = 16, source: Optional[str] = "local", batch: Optional[int] = 1
+):
     """
 
     :param batch: batch 应是自然数，仅在 source==remote 时生效，用于指定拉取的数据范围。
@@ -367,8 +384,7 @@ def run_classifier(power: Optional[int] = 16, source: Optional[str] = "local", b
     # 存储分类结果
     docker = sug.offload()
     path_output = V2RSSMiningToolkit.output_cleaning_dataset(
-        dir_output=DIR_OUTPUT_STORE_CLASSIFIER,
-        docker=docker,
+        dir_output=DIR_OUTPUT_STORE_CLASSIFIER, docker=docker
     )
 
     # 数据预览

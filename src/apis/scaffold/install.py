@@ -45,9 +45,7 @@ def run(cdn: Optional[bool] = False):
     :return:
     """
     logger.debug("正在下载系统依赖")
-    docker = [
-        _download_driver,
-    ]
+    docker = [_download_driver]
 
     booster = PerformanceReleaser(docker=docker, power=2)
     booster.go(cdn=cdn)

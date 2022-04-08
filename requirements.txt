@@ -16,3 +16,5 @@ gevent>=21.8.0
 tqdm>=4.62.3
 pytz>=2021.3
 webdriver_manager==3.5.2
+pydub>=0.25.1
+SpeechRecognition==3.8.1

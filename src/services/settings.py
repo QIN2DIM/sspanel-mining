@@ -5,6 +5,7 @@
 # Description:
 import os
 from os.path import dirname, join, exists
+from services.utils import InitLog
 
 import pytz
 
@@ -16,7 +17,10 @@ PROJECT_ROOT = dirname(dirname(__file__))
 
 # 系统数据库
 PROJECT_DATABASE = join(PROJECT_ROOT, "database")
-
+# 运行缓存目录
+DIR_TEMP_CACHE = join(PROJECT_DATABASE, "temp_cache")
+# 声纹验证运行缓存目录
+DIR_CACHE_AUDIO = join(DIR_TEMP_CACHE, "_audio")
 # 运行缓存:采集器输出目录
 DIR_OUTPUT_STORE_COLLECTOR = join(PROJECT_DATABASE, "sspanel_hosts")
 
@@ -26,11 +30,9 @@ DIR_OUTPUT_STORE_CLASSIFIER = join(DIR_OUTPUT_STORE_COLLECTOR, "classifier")
 # TODO [√] 运行日志设置
 # ---------------------------------------------------
 DIR_LOG = join(PROJECT_DATABASE, "logs")
-from services.utils import InitLog
 
 logger = InitLog.init_log(
-    error=join(DIR_LOG, "error.log"),
-    runtime=join(DIR_LOG, "runtime.log")
+    error=join(DIR_LOG, "error.log"), runtime=join(DIR_LOG, "runtime.log")
 )
 # ---------------------------------------------------
 # TODO [*] 自动调整
@@ -42,9 +44,11 @@ TIME_ZONE_NY = pytz.timezone("America/New_York")
 # 目录补全
 for _pending in [
     PROJECT_DATABASE,
+    DIR_TEMP_CACHE,
+    DIR_CACHE_AUDIO,
     DIR_OUTPUT_STORE_COLLECTOR,
     DIR_OUTPUT_STORE_CLASSIFIER,
-    DIR_LOG
+    DIR_LOG,
 ]:
     if not exists(_pending):
         os.mkdir(_pending)

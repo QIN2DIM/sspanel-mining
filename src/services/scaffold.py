@@ -3,14 +3,10 @@ from gevent import monkey
 monkey.patch_all()
 from typing import Optional
 
-from apis.scaffold import (
-    mining,
-    install
-)
+from apis.scaffold import mining, install
 
 
 class Scaffold:
-
     @staticmethod
     def install(cdn: Optional[bool] = None):
         """
@@ -33,13 +29,13 @@ class Scaffold:
 
     @staticmethod
     def mining(
-            env: Optional[str] = "development",
-            silence: Optional[bool] = True,
-            power: Optional[int] = 16,
-            collector: Optional[bool] = False,
-            classifier: Optional[bool] = False,
-            source: Optional[str] = "local",
-            batch: Optional[int] = 1,
+        env: Optional[str] = "development",
+        silence: Optional[bool] = True,
+        power: Optional[int] = 16,
+        collector: Optional[bool] = False,
+        classifier: Optional[bool] = False,
+        source: Optional[str] = "local",
+        batch: Optional[int] = 1,
     ):
         """
         运行 Collector 以及 Classifier 采集并过滤基层数据

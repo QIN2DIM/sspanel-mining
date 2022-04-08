@@ -8,12 +8,7 @@ from typing import Optional, List, Any
 from urllib.parse import urlparse
 
 from cloudscraper.exceptions import CloudflareChallengeError
-from requests.exceptions import (
-    Timeout,
-    ConnectionError,
-    SSLError, HTTPError,
-    ProxyError,
-)
+from requests.exceptions import Timeout, ConnectionError, SSLError, HTTPError, ProxyError
 
 from services.settings import logger
 from .sspanel_classifier import SSPanelHostsClassifier
@@ -46,11 +41,9 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
         _loss_staff = True if status_code != 200 else False
 
         if _loss_staff and self.debug:
-            logger.info(self.report(
-                message="STAFF",
-                url=staff_url,
-                status_code=status_code
-            ))
+            logger.info(
+                self.report(message="STAFF", url=staff_url, status_code=status_code)
+            )
         self._protocol_hook(staff_url, "loss_staff", _loss_staff)
 
     def _fall_tos_page(self, tos_url: str) -> None:
@@ -59,11 +52,9 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
         _loss_tos = True if status_code != 200 else False
 
         if _loss_tos and self.debug:
-            logger.warning(self.report(
-                message="TOS",
-                url=tos_url,
-                status_code=status_code
-            ))
+            logger.warning(
+                self.report(message="TOS", url=tos_url, status_code=status_code)
+            )
 
         self._protocol_hook(tos_url, "loss_tos", _loss_tos)
 
@@ -84,34 +75,27 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
 
         # 转发上下文评价数据
         if context.get("ok"):
-            logger.success(self.report(
-                message="实例正常",
-                url=context["url"],
-                copyright=context["copyright"]
-            ))
+            logger.success(
+                self.report(
+                    message="实例正常", url=context["url"], copyright=context["copyright"]
+                )
+            )
         else:
-            logger.error(self.report(
-                message="脚注异常",
-                url=context["url"],
-            ))
+            logger.error(self.report(message="脚注异常", url=context["url"]))
 
     def _fall_rookie(self, url: str) -> None:
         response, status_code, soup = self.handle_html(url)
 
         # 有趣的模版，有趣的灵魂
-        _is_rookie = True if (
-                "占位符" in soup.text
-                or "。素质三连" in soup.text
-                or "CXK" in soup.text
-        ) else False
+        _is_rookie = (
+            True
+            if ("占位符" in soup.text or "。素质三连" in soup.text or "CXK" in soup.text)
+            else False
+        )
 
         # 打印日志
         if _is_rookie and self.debug:
-            logger.warning(self.report(
-                message="新手司机",
-                url=url,
-                rookie=True
-            ))
+            logger.warning(self.report(message="新手司机", url=url, rookie=True))
 
         # 缓存上下文数据
         self._protocol_hook(url, "rookie", _is_rookie)
@@ -125,11 +109,9 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
         :return:
         """
         _hook = urlparse(url)
-        self.done.put_nowait({
-            f"{_hook.scheme}://{_hook.netloc}": {
-                cache_key: cache_value
-            },
-        })
+        self.done.put_nowait(
+            {f"{_hook.scheme}://{_hook.netloc}": {cache_key: cache_value}}
+        )
 
     def preload(self):
         """
@@ -145,11 +127,7 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
             _parse_obj = urlparse(url)
             _url = f"{_parse_obj.scheme}://{_parse_obj.netloc}"
             # 添加审查 path
-            for suffix_ in [
-                self.path_register,
-                self.path_tos,
-                self.path_staff
-            ]:
+            for suffix_ in [self.path_register, self.path_tos, self.path_staff]:
                 _docker.append(_url + suffix_)
             # 添加主页
             _docker.append(_url)
@@ -177,20 +155,22 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
             return False
         # 未授权站点
         except ValueError:
-            logger.critical(self.report(
-                message="危险通信",
-                context={"url": url, "label": "未授权站点"},
-                url=url
-            ))
+            logger.critical(
+                self.report(
+                    message="危险通信", context={"url": url, "label": "未授权站点"}, url=url
+                )
+            )
             return False
         # <CloudflareDefense>被迫中断且无法跳过
         except CloudflareChallengeError:
-            logger.debug(self.report(
-                message="检测失败",
-                context={"url": url, "label": "CloudflareDefenseV2"},
-                url=url,
-                error="<CloudflareDefense>被迫中断且无法跳过"
-            ))
+            logger.debug(
+                self.report(
+                    message="检测失败",
+                    context={"url": url, "label": "CloudflareDefenseV2"},
+                    url=url,
+                    error="<CloudflareDefense>被迫中断且无法跳过",
+                )
+            )
             return False
         # 站点负载紊乱或主要服务器已瘫痪
         except Timeout:
@@ -208,8 +188,12 @@ class SSPanelStaffChecker(SSPanelHostsClassifier):
                 else:
                     _cache_docker[hook_netloc].update(cache_dict)
         for hook_netloc, labels in _cache_docker.items():
-            _output_docker.append({
-                "url": hook_netloc,
-                "labels": ";".join([label[0] for label in labels.items() if label[-1]])
-            })
+            _output_docker.append(
+                {
+                    "url": hook_netloc,
+                    "labels": ";".join(
+                        [label[0] for label in labels.items() if label[-1]]
+                    ),
+                }
+            )
         return _output_docker
